@@ -1,0 +1,11 @@
+# Editor and OS files
+.history/
+.DS_Store
+
+# Node modules
+node_modules/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
