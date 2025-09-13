@@ -1,0 +1,172 @@
+# 技术栈总结Agent配置文件
+# Tech Stack Summary Agent Configuration
+
+# 基本配置
+basic:
+  # Agent名称
+  name: "TechStackSummaryAgent"
+  # Agent版本
+  version: "1.0.0"
+  # Agent描述
+  description: "分析MCP会话数据并更新学习进度的智能Agent"
+  # 是否启用
+  enabled: true
+
+# 时间间隔配置
+schedule:
+  # 分析间隔时间（小时）
+  analysis_interval_hours: 24
+  # 深度分析间隔（天）
+  deep_analysis_interval_days: 7
+  # 月度总结间隔（天）
+  monthly_summary_interval_days: 30
+  # 季度报告间隔（天）
+  quarterly_report_interval_days: 90
+
+# 数据处理配置
+data_processing:
+  # 单次处理的最大会话数量
+  max_sessions_per_batch: 100
+  # 数据保留天数
+  data_retention_days: 365
+  # 是否启用增量处理
+  incremental_processing: true
+  # 最小会话时长（分钟）- 低于此时长的会话将被忽略
+  min_session_duration_minutes: 5
+
+# 分析配置
+analysis:
+  # 技术栈权重配置
+  tech_stack_weights:
+    programming_language: 1.0
+    framework: 0.8
+    library: 0.6
+    tool: 0.4
+    database: 0.7
+  
+  # 熟练度评分算法配置
+  proficiency_scoring:
+    # 基础分数
+    base_score: 10.0
+    # 时长权重
+    duration_weight: 0.3
+    # 复杂度权重
+    complexity_weight: 0.4
+    # 质量权重
+    quality_weight: 0.3
+    # 最大单次增长
+    max_single_increment: 5.0
+  
+  # 学习进度计算
+  learning_progress:
+    # 新技术识别阈值
+    new_tech_threshold_hours: 2.0
+    # 熟练度提升阈值
+    proficiency_improvement_threshold: 5.0
+    # 技能衰减率（每天）
+    skill_decay_rate_per_day: 0.001
+
+# 推荐系统配置
+recommendation:
+  # 是否启用智能推荐
+  enable_smart_recommendations: true
+  # 推荐技术数量
+  max_recommendations: 5
+  # 市场趋势权重
+  market_trend_weight: 0.3
+  # 职业发展权重
+  career_development_weight: 0.4
+  # 项目需求权重
+  project_requirement_weight: 0.3
+
+# 报告生成配置
+reporting:
+  # 是否生成详细报告
+  generate_detailed_reports: true
+  # 报告语言
+  report_language: "zh-CN"
+  # 包含的分析维度
+  analysis_dimensions:
+    - "technology_usage"
+    - "skill_progression"
+    - "learning_velocity"
+    - "project_impact"
+    - "market_alignment"
+  
+  # 图表配置
+  charts:
+    enable_charts: true
+    chart_types:
+      - "skill_radar"
+      - "technology_timeline"
+      - "learning_progress"
+      - "market_comparison"
+
+# 通知配置
+notifications:
+  # 是否启用通知
+  enabled: true
+  # 通知类型
+  types:
+    - "weekly_summary"
+    - "skill_milestone"
+    - "learning_recommendation"
+  # 通知渠道
+  channels:
+    - "in_app"
+    - "email"
+
+# 性能配置
+performance:
+  # 并发处理数
+  max_concurrent_processes: 4
+  # 内存限制（MB）
+  memory_limit_mb: 512
+  # 超时时间（秒）
+  timeout_seconds: 300
+  # 是否启用缓存
+  enable_caching: true
+  # 缓存过期时间（小时）
+  cache_expiry_hours: 6
+
+# 日志配置
+logging:
+  # 日志级别
+  level: "INFO"
+  # 是否记录详细分析过程
+  log_analysis_details: true
+  # 日志文件路径
+  log_file_path: "logs/tech_stack_agent.log"
+  # 日志轮转大小（MB）
+  log_rotation_size_mb: 10
+  # 保留日志文件数量
+  log_retention_count: 5
+
+# 数据库配置
+database:
+  # 连接池大小
+  pool_size: 10
+  # 连接超时（秒）
+  connection_timeout: 30
+  # 查询超时（秒）
+  query_timeout: 60
+  # 是否启用事务
+  enable_transactions: true
+
+# 安全配置
+security:
+  # 是否启用数据加密
+  enable_encryption: false
+  # API访问密钥（生产环境请使用环境变量）
+  api_key: "tech_stack_agent_key_2024"
+  # 允许的IP地址（空表示允许所有）
+  allowed_ips: []
+
+# 实验性功能
+experimental:
+  # 是否启用AI增强分析
+  enable_ai_enhanced_analysis: true
+  # 是否启用预测性分析
+  enable_predictive_analysis: false
+  # 是否启用自动化学习路径生成
+  enable_auto_learning_path: true
