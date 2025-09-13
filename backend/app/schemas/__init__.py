@@ -14,6 +14,12 @@ from .learning_task import *
 from .technical_debt import *
 from .mcp import *
 
+# 新增的schemas
+from .mcp_session import *
+from .learning_progress import *
+from .learning_content import *
+from .tech_stack_config import *
+
 __all__ = [
     "AgentCreate", "AgentUpdate", "AgentResponse",
     "ConversationCreate", "ConversationUpdate", "ConversationResponse",

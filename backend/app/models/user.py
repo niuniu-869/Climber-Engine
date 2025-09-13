@@ -61,6 +61,14 @@ class User(Base):
     skill_assessments = relationship("SkillAssessment", back_populates="user", cascade="all, delete-orphan")
     learning_tasks = relationship("LearningTask", back_populates="user", cascade="all, delete-orphan")
     
+    # 新增关系
+    mcp_sessions = relationship("MCPSession", back_populates="user", cascade="all, delete-orphan")
+    tech_stack_assets = relationship("TechStackAsset", back_populates="user", cascade="all, delete-orphan")
+    tech_stack_debts = relationship("TechStackDebt", back_populates="user", cascade="all, delete-orphan")
+    learning_progress_summaries = relationship("LearningProgressSummary", back_populates="user", cascade="all, delete-orphan")
+    learning_articles = relationship("LearningArticle", back_populates="user", cascade="all, delete-orphan")
+    learning_questions = relationship("LearningQuestion", back_populates="user", cascade="all, delete-orphan")
+    
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', skill_level='{self.skill_level}')>"
     

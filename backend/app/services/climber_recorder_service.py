@@ -13,6 +13,7 @@ import asyncio
 from enum import Enum
 
 from ..models.user import User
+from ..models.mcp_session import MCPSession, MCPCodeSnippet
 from ..schemas.mcp import (
     MCPMessage, MCPError, MCPCapabilities, MCPClientInfo, MCPServerInfo,
     MCPInitializeRequest, MCPInitializeResponse, MCPListToolsRequest, MCPListToolsResponse,
@@ -166,6 +167,69 @@ class ClimberRecorderService:
                             "enum": ["beginner", "intermediate", "advanced", "expert"],
                             "description": "难度级别"
                         },
+                        "project_name": {
+                            "type": "string",
+                            "description": "项目名称"
+                        },
+                        "session_name": {
+                            "type": "string",
+                            "description": "会话名称"
+                        },
+                        "frameworks": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "使用的框架列表"
+                        },
+                        "libraries": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "使用的库列表"
+                        },
+                        "tools": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "使用的工具列表"
+                        },
+                        "achievements": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "完成的成就列表"
+                        },
+                        "challenges_faced": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "遇到的挑战列表"
+                        },
+                        "solutions_applied": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "应用的解决方案列表"
+                        },
+                        "lessons_learned": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "学到的经验列表"
+                        },
+                        "code_snippet": {
+                            "type": "string",
+                            "description": "相关代码片段"
+                        },
+                        "estimated_duration": {
+                            "type": "integer",
+                            "description": "预计时长（分钟）"
+                        },
+                        "files_modified": {
+                            "type": "integer",
+                            "description": "修改的文件数"
+                        },
+                        "lines_added": {
+                            "type": "integer",
+                            "description": "新增代码行数"
+                        },
+                        "lines_deleted": {
+                            "type": "integer",
+                            "description": "删除代码行数"
+                        },
                         "notes": {
                             "type": "string",
                             "description": "额外备注"
@@ -215,8 +279,8 @@ class ClimberRecorderService:
             # 添加到会话记录中
             session.add_tech_stack_record(record)
             
-            # 这里可以添加持久化到数据库的逻辑
-            # await self._save_tech_stack_record(record)
+            # 保存到数据库
+            await self._save_tech_stack_record(record, session)
             
             return MCPCallToolResponse(
                 content=[
@@ -244,6 +308,113 @@ class ClimberRecorderService:
                 ],
                 is_error=True
             )
+    
+    async def _save_tech_stack_record(self, record: Dict[str, Any], session: RecorderSession) -> None:
+        """保存技术栈记录到数据库"""
+        try:
+            # 查找或创建MCP会话记录
+            mcp_session = self.db.query(MCPSession).filter(
+                MCPSession.user_id == session.user_id,
+                MCPSession.status == "active"
+            ).first()
+            
+            if not mcp_session:
+                # 创建新的MCP会话
+                mcp_session = MCPSession(
+                    user_id=session.user_id,
+                    session_name=record.get('session_name', f"MCP Session {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"),
+                    session_description="Climber-Recorder MCP会话",
+                    project_name=record.get('project_name', "Unknown Project"),
+                    work_type=record['work_type'],
+                    task_description=record['task_description'],
+                    technologies=record['technologies'],
+                    primary_language=record['technologies'][0] if record['technologies'] else None,
+                    frameworks=record.get('frameworks', []),
+                    libraries=record.get('libraries', []),
+                    tools=record.get('tools', []),
+                    difficulty_level=record['difficulty_level'],
+                    complexity_score=self._calculate_complexity_score(record),
+                    estimated_duration=record.get('estimated_duration'),
+                    work_summary=record.get('notes', ''),
+                    achievements=record.get('achievements', []),
+                    challenges_faced=record.get('challenges_faced', []),
+                    solutions_applied=record.get('solutions_applied', []),
+                    lessons_learned=record.get('lessons_learned', []),
+                    files_modified=record.get('files_modified', 0),
+                    lines_added=record.get('lines_added', 0),
+                    lines_deleted=record.get('lines_deleted', 0),
+                    mcp_server_version="1.0.0",
+                    mcp_client_info=session.client_info.model_dump() if session.client_info else {},
+                    mcp_call_count=len(session.tech_stack_records),
+                    notes=record.get('notes', ''),
+                    tags=record['technologies'],
+                    status="active"
+                )
+                self.db.add(mcp_session)
+                self.db.flush()  # 获取ID
+                logger.info(f"Created new MCP session {mcp_session.id} for user {session.user_id}")
+            else:
+                # 更新现有会话
+                mcp_session.technologies = list(set(mcp_session.technologies + record['technologies']))
+                mcp_session.mcp_call_count = len(session.tech_stack_records)
+                mcp_session.updated_at = datetime.utcnow()
+                if record.get('notes'):
+                    mcp_session.notes = (mcp_session.notes or '') + '\n' + record['notes']
+                logger.info(f"Updated MCP session {mcp_session.id} with new tech stack record")
+            
+            # 如果有代码相关的记录，可以创建代码片段
+            if record.get('code_snippet'):
+                code_snippet = MCPCodeSnippet(
+                    mcp_session_id=mcp_session.id,
+                    title=f"Code for {record['task_description'][:50]}...",
+                    description=record['task_description'],
+                    code_content=record['code_snippet'],
+                    language=record['technologies'][0] if record['technologies'] else 'unknown',
+                    snippet_type='function',
+                    purpose=record['task_description'],
+                    related_technologies=record['technologies'],
+                    difficulty_rating=self._get_difficulty_rating(record['difficulty_level'])
+                )
+                self.db.add(code_snippet)
+            
+            self.db.commit()
+            logger.info(f"Successfully saved tech stack record to database")
+            
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Failed to save tech stack record to database: {e}")
+            raise
+    
+    def _calculate_complexity_score(self, record: Dict[str, Any]) -> float:
+        """计算复杂度评分"""
+        base_score = 5.0
+        tech_count = len(record.get('technologies', []))
+        
+        # 根据技术栈数量调整
+        if tech_count > 5:
+            base_score += 2.0
+        elif tech_count > 3:
+            base_score += 1.0
+        
+        # 根据难度级别调整
+        difficulty_multiplier = {
+            'beginner': 0.8,
+            'intermediate': 1.0,
+            'advanced': 1.3,
+            'expert': 1.5
+        }
+        
+        return min(10.0, base_score * difficulty_multiplier.get(record.get('difficulty_level', 'intermediate'), 1.0))
+    
+    def _get_difficulty_rating(self, difficulty_level: str) -> int:
+        """获取难度评级"""
+        mapping = {
+            'beginner': 2,
+            'intermediate': 3,
+            'advanced': 4,
+            'expert': 5
+        }
+        return mapping.get(difficulty_level, 3)
     
     def get_sessions(self, skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
         """获取会话列表"""
