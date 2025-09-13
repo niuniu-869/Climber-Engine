@@ -29,13 +29,58 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 加载Trae环境变量
+load_trae_env() {
+    # 检查是否在Trae环境中
+    local trae_node_path=""
+    local uv_path=""
+    
+    # 尝试多个可能的Node.js路径
+    if [ -n "$HOME" ] && [ -d "$HOME/.trae/sdks/versions/node/current" ]; then
+        trae_node_path="$HOME/.trae/sdks/versions/node/current"
+    elif [ -d "/Users/mac/.trae/sdks/versions/node/current" ]; then
+        trae_node_path="/Users/mac/.trae/sdks/versions/node/current"
+    fi
+    
+    # 尝试多个可能的uv路径
+    if [ -n "$HOME" ] && [ -f "$HOME/.local/bin/uv" ]; then
+        uv_path="$HOME/.local/bin"
+    elif [ -f "/Users/mac/.local/bin/uv" ]; then
+        uv_path="/Users/mac/.local/bin"
+    fi
+    
+    # 构建PATH
+    local new_paths=""
+    if [ -n "$trae_node_path" ]; then
+        new_paths="$trae_node_path"
+        log_info "已加载Trae Node.js环境: $trae_node_path"
+    fi
+    
+    if [ -n "$uv_path" ]; then
+        if [ -n "$new_paths" ]; then
+            new_paths="$new_paths:$uv_path"
+        else
+            new_paths="$uv_path"
+        fi
+        log_info "已加载uv环境: $uv_path"
+    fi
+    
+    if [ -n "$new_paths" ]; then
+        export PATH="$new_paths:$PATH"
+    fi
+}
+
 # 检查依赖
 check_dependencies() {
     log_info "检查系统依赖..."
     
+    # 先尝试加载Trae环境
+    load_trae_env
+    
     # 检查 Node.js
     if ! command -v node &> /dev/null; then
         log_error "Node.js 未安装，请先安装 Node.js"
+        log_info "提示：如果您使用的是Trae IDE，请确保在Trae终端中运行此脚本"
         exit 1
     fi
     

@@ -177,7 +177,7 @@ const Launch: React.FC = () => {
         </div>
 
         {/* 快速操作 */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">快速操作</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <a
@@ -209,6 +209,119 @@ const Launch: React.FC = () => {
                 </div>
               </div>
             </a>
+          </div>
+        </div>
+
+        {/* Climber-Recorder 配置与简介 */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Climber-Recorder 技术栈记录器</h2>
+          
+          {/* Climber-Recorder 简介 */}
+          <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">关于 Climber-Recorder</h3>
+            <p className="text-gray-700 mb-4">
+              Climber-Recorder 是一个专门的 MCP 工具服务器，用于记录 AI Agent 工作过程中使用的技术栈。它可以帮助您：
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>📝 自动记录每次工作会话中使用的技术栈</li>
+              <li>📊 跟踪不同任务类型和难度级别的技术使用情况</li>
+              <li>🎯 分析技能发展轨迹和技术栈演进</li>
+              <li>📈 为学习路径规划提供数据支持</li>
+            </ul>
+            <div className="flex items-center space-x-2 text-sm text-green-700">
+              <Server className="w-4 h-4" />
+              <span>独立 MCP 服务器，专注技术栈记录</span>
+            </div>
+          </div>
+
+          {/* Climber-Recorder 配置 */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-gray-900">一键配置 Climber-Recorder</h3>
+            
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h4 className="font-semibold text-gray-900 mb-3">UV 配置文件 (推荐)</h4>
+              <p className="text-sm text-gray-600 mb-4">
+                将以下配置添加到您的 Claude Desktop 配置文件中：
+              </p>
+              <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                <pre className="text-green-400 text-sm font-mono">
+{`{
+  "mcpServers": {
+    "climber-recorder": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/mac/Desktop/AccountingLLM/Climber Engine/backend",
+        "run",
+        "python",
+        "climber_recorder_server.py"
+      ],
+      "env": {}
+    }
+  }
+}`}
+                </pre>
+              </div>
+              <button
+                onClick={() => {
+                  const config = {
+                    mcpServers: {
+                      "climber-recorder": {
+                        command: "uv",
+                        args: [
+                          "--directory",
+                          "/Users/mac/Desktop/AccountingLLM/Climber Engine/backend",
+                          "run",
+                          "python",
+                          "climber_recorder_server.py"
+                        ],
+                        env: {}
+                      }
+                    }
+                  };
+                  navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+                  alert('Climber-Recorder 配置已复制到剪贴板！');
+                }}
+                className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                📋 复制配置到剪贴板
+              </button>
+            </div>
+
+            <div className="bg-blue-50 rounded-lg p-6">
+              <h4 className="font-semibold text-gray-900 mb-3">配置步骤</h4>
+              <ol className="list-decimal list-inside text-gray-700 space-y-2">
+                <li>确保已安装 uv 包管理器 (启动脚本会自动安装)</li>
+                <li>打开 Claude Desktop 应用</li>
+                <li>进入设置 → MCP 服务器配置</li>
+                <li>粘贴上方的 Climber-Recorder 配置 JSON</li>
+                <li>重启 Claude Desktop 以加载配置</li>
+                <li>在对话中输入 "记录技术栈" 开始使用</li>
+              </ol>
+            </div>
+
+            <div className="bg-green-50 rounded-lg p-6 border border-green-200">
+              <h4 className="font-semibold text-gray-900 mb-3">🎯 使用方法</h4>
+              <p className="text-gray-700 mb-3">配置完成后，您可以在 Claude 对话中使用以下命令：</p>
+              <div className="bg-white rounded p-3 border border-green-300">
+                <code className="text-sm text-green-800">
+                  请记录本次工作的技术栈：Python, FastAPI, SQLAlchemy, React, TypeScript
+                </code>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Climber-Recorder 会自动记录技术栈、任务描述、工作类型和难度级别等信息。
+              </p>
+            </div>
+
+            <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
+              <h4 className="font-semibold text-gray-900 mb-3">⚠️ 注意事项</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>请确保路径 "/Users/mac/Desktop/AccountingLLM/Climber Engine/backend" 正确</li>
+                <li>如果项目路径不同，请修改配置中的 "--directory" 参数</li>
+                <li>Climber-Recorder 是独立运行的，不需要启动完整的登攀引擎服务</li>
+                <li>记录的数据会保存在会话中，可通过 API 端点查询</li>
+              </ul>
+            </div>
           </div>
         </div>
 

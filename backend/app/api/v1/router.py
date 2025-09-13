@@ -9,7 +9,7 @@ from datetime import datetime
 from app.api.v1.endpoints import (
     agents, conversations, knowledge, tools,
     users, coding_sessions, skill_assessments, 
-    learning_tasks, technical_debt, mcp
+    learning_tasks, technical_debt, mcp, climber_recorder
 )
 
 api_router = APIRouter()
@@ -36,3 +36,4 @@ api_router.include_router(skill_assessments.router, prefix="/skill-assessments",
 api_router.include_router(learning_tasks.router, prefix="/learning-tasks", tags=["learning-tasks"])
 api_router.include_router(technical_debt.router, prefix="/technical-debt", tags=["technical-debt"])
 api_router.include_router(mcp.router, prefix="/mcp", tags=["mcp"])
+api_router.include_router(climber_recorder.router, prefix="/climber-recorder", tags=["climber-recorder"])

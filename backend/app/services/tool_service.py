@@ -46,7 +46,7 @@ class ToolService:
             description=tool_data.description,
             tool_type=tool_data.tool_type,
             config=tool_data.config,
-            schema=tool_data.schema,
+            tool_schema=tool_data.tool_schema,
             version=tool_data.version
         )
         

@@ -22,7 +22,7 @@ class Tool(Base):
     # 工具配置
     tool_type = Column(String(50), nullable=False)  # mcp, builtin, external
     config = Column(JSON)  # 工具的配置信息
-    schema = Column(JSON)  # 工具的输入输出模式
+    tool_schema = Column(JSON)  # 工具的输入输出模式
     
     # 状态信息
     is_active = Column(Boolean, default=True)

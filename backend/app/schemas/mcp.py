@@ -67,7 +67,7 @@ class MCPTool(BaseModel):
     """MCP 工具模式"""
     name: str
     description: str
-    input_schema: Dict[str, Any]  # JSON Schema
+    inputSchema: Dict[str, Any] = Field(...)  # JSON Schema
 
 
 class MCPToolCall(BaseModel):

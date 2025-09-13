@@ -14,7 +14,7 @@ class ToolBase(BaseModel):
     description: Optional[str] = Field(None, description="工具描述")
     tool_type: str = Field(..., description="工具类型: mcp, builtin, external")
     config: Optional[Dict[str, Any]] = Field(None, description="工具配置")
-    schema: Optional[Dict[str, Any]] = Field(None, description="工具输入输出模式")
+    tool_schema: Optional[Dict[str, Any]] = Field(None, description="工具输入输出模式")
     version: str = Field("1.0.0", description="版本号")
 
 
@@ -28,7 +28,7 @@ class ToolUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = None
     config: Optional[Dict[str, Any]] = None
-    schema: Optional[Dict[str, Any]] = None
+    tool_schema: Optional[Dict[str, Any]] = None
     is_active: Optional[bool] = None
     version: Optional[str] = None
 
