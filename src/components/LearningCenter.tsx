@@ -7,6 +7,7 @@ interface LearningCenterProps {
   userId: number;
   onStartLearning?: (content: any) => void;
   onNotification?: (message: string) => void;
+  onGenerateContent?: () => Promise<void>;
 }
 
 interface LearningContent {
@@ -23,7 +24,8 @@ interface LearningContent {
 const LearningCenter: React.FC<LearningCenterProps> = ({ 
   userId, 
   onStartLearning,
-  onNotification 
+  onNotification,
+  onGenerateContent 
 }) => {
   const [recommendations, setRecommendations] = useState<LearningRecommendation | null>(null);
   const [recentArticles, setRecentArticles] = useState<LearningArticle[]>([]);
@@ -191,7 +193,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
           AI学习中心
         </h2>
         <button 
-          onClick={() => generateNewContent()}
+          onClick={() => onGenerateContent ? onGenerateContent() : generateNewContent()}
           disabled={isGenerating}
           className={`px-4 py-2 text-white rounded-lg transition-colors flex items-center ${
             isGenerating 

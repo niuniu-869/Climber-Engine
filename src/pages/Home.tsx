@@ -27,11 +27,34 @@ const Home: React.FC = () => {
     }, 3000);
   };
 
-  const handleViewReport = () => {
-    addNotification('正在跳转到技术债务报告...');
-    setTimeout(() => {
-      navigate('/tech-debt-report');
-    }, 500);
+  const handleViewReport = async () => {
+    addNotification('正在运行技术债务总结Agent...');
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/tech-stack-agent/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          force_run: true
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        addNotification('技术债务分析完成！');
+        // 刷新页面数据
+        setTimeout(() => {
+          loadDashboardData();
+        }, 1000);
+      } else {
+        addNotification('技术债务分析失败，请稍后重试');
+      }
+    } catch (error) {
+      console.error('技术债务分析错误:', error);
+      addNotification('技术债务分析失败，请稍后重试');
+    }
   };
 
   const handleNavigateToLearningCenter = () => {
@@ -79,6 +102,37 @@ const Home: React.FC = () => {
       }
     } else {
       handleNavigateToLearningCenter();
+    }
+  };
+
+  const handleGenerateContent = async () => {
+    addNotification('正在运行编程教学Agent...');
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/coding-tutor-agent/generate-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          content_type: 'mixed',
+          count: 5
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        addNotification('学习内容生成完成！');
+        // 刷新页面数据
+        setTimeout(() => {
+          loadDashboardData();
+        }, 1000);
+      } else {
+        addNotification('学习内容生成失败，请稍后重试');
+      }
+    } catch (error) {
+      console.error('学习内容生成错误:', error);
+      addNotification('学习内容生成失败，请稍后重试');
     }
   };
 
@@ -195,6 +249,7 @@ const Home: React.FC = () => {
             userId={userId} 
             onStartLearning={handleStartLearning}
             onNotification={addNotification}
+            onGenerateContent={handleGenerateContent}
           />
         </div>
 
