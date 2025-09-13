@@ -1,0 +1,287 @@
+# Coding教学Agent配置文件
+# Coding Tutor Agent Configuration
+
+# 基本配置
+basic:
+  # Agent名称
+  name: "CodingTutorAgent"
+  # Agent版本
+  version: "1.0.0"
+  # Agent描述
+  description: "基于学习进度生成个性化编程教学内容和练习题的智能Agent"
+  # 是否启用
+  enabled: true
+
+# 内容生成配置
+content_generation:
+  # 默认生成内容数量
+  default_content_count: 5
+  # 最大生成内容数量
+  max_content_count: 20
+  # 内容难度级别
+  difficulty_levels:
+    - "beginner"
+    - "intermediate"
+    - "advanced"
+    - "expert"
+  
+  # 内容类型配置
+  content_types:
+    article:
+      enabled: true
+      min_length: 500  # 最小字数
+      max_length: 2000  # 最大字数
+      include_code_examples: true
+      include_best_practices: true
+    
+    quiz:
+      enabled: true
+      questions_per_quiz: 5
+      max_options_per_question: 4
+      include_explanation: true
+      time_limit_minutes: 15
+    
+    exercise:
+      enabled: true
+      include_starter_code: true
+      include_test_cases: true
+      include_solution: true
+
+# 学习路径配置
+learning_path:
+  # 是否启用自动推荐
+  auto_recommendation: true
+  # 推荐算法权重
+  recommendation_weights:
+    urgency_level: 0.3      # 紧急程度
+    importance_score: 0.25   # 重要性
+    career_impact: 0.2       # 职业影响
+    project_relevance: 0.15  # 项目相关性
+    market_demand: 0.1       # 市场需求
+  
+  # 学习顺序优化
+  learning_sequence:
+    consider_prerequisites: true
+    group_related_topics: true
+    balance_difficulty: true
+
+# 个性化配置
+personalization:
+  # 基于用户历史的个性化
+  use_learning_history: true
+  # 基于用户偏好的个性化
+  use_user_preferences: true
+  # 适应性学习
+  adaptive_learning:
+    enabled: true
+    adjust_difficulty_based_on_performance: true
+    recommend_review_for_weak_areas: true
+    skip_mastered_content: false
+
+# 内容质量控制
+quality_control:
+  # 内容审核
+  content_review:
+    enabled: true
+    check_code_syntax: true
+    validate_examples: true
+    ensure_best_practices: true
+  
+  # 难度评估
+  difficulty_assessment:
+    enabled: true
+    use_complexity_metrics: true
+    consider_prerequisite_knowledge: true
+    adjust_based_on_feedback: true
+
+# 进度跟踪配置
+progress_tracking:
+  # 学习记录
+  learning_records:
+    track_time_spent: true
+    track_completion_rate: true
+    track_accuracy_rate: true
+    track_retry_attempts: true
+  
+  # 技能评估
+  skill_assessment:
+    update_proficiency_on_completion: true
+    weight_by_difficulty: true
+    consider_time_taken: true
+    decay_old_scores: true
+    decay_rate_per_day: 0.001
+
+# AI集成配置
+ai_integration:
+  # 是否启用AI生成内容
+  enable_ai_generation: true
+  # AI模型配置
+  ai_model:
+    provider: "openai"  # openai, anthropic, local
+    model_name: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2000
+  
+  # 内容生成提示模板
+  prompt_templates:
+    article_generation: |
+      请为{technology}技术栈生成一篇{difficulty_level}级别的教学文章。
+      用户当前掌握程度：{current_proficiency}
+      目标学习内容：{learning_objectives}
+      请包含：
+      1. 概念解释
+      2. 实际代码示例
+      3. 最佳实践
+      4. 常见陷阱
+      文章长度：{min_length}-{max_length}字
+    
+    quiz_generation: |
+      请为{technology}技术栈生成{question_count}道{difficulty_level}级别的选择题。
+      用户当前掌握程度：{current_proficiency}
+      重点考察：{focus_areas}
+      每题要求：
+      1. 4个选项，只有1个正确答案
+      2. 包含详细解释
+      3. 难度适中，有区分度
+      4. 贴近实际应用场景
+    
+    exercise_generation: |
+      请为{technology}技术栈生成一个{difficulty_level}级别的编程练习。
+      用户当前掌握程度：{current_proficiency}
+      练习要求：
+      1. 明确的问题描述
+      2. 输入输出示例
+      3. 起始代码模板
+      4. 测试用例
+      5. 参考解答
+      重点训练：{skill_focus}
+
+# 代码分析配置
+code_analysis:
+  # 是否启用代码分析
+  enabled: true
+  # 支持的编程语言
+  supported_languages:
+    - "python"
+    - "javascript"
+    - "typescript"
+    - "java"
+    - "go"
+    - "rust"
+  
+  # 代码示例提取
+  code_extraction:
+    extract_from_user_projects: true
+    anonymize_sensitive_data: true
+    filter_by_quality: true
+    min_quality_score: 70
+  
+  # 代码模式识别
+  pattern_recognition:
+    identify_design_patterns: true
+    detect_best_practices: true
+    find_common_mistakes: true
+    analyze_complexity: true
+
+# 反馈系统配置
+feedback_system:
+  # 用户反馈收集
+  collect_user_feedback: true
+  # 自动质量评估
+  auto_quality_assessment: true
+  # 内容改进
+  content_improvement:
+    enabled: true
+    update_based_on_feedback: true
+    retire_low_quality_content: true
+    min_rating_threshold: 3.0
+
+# 缓存配置
+caching:
+  # 是否启用缓存
+  enabled: true
+  # 缓存过期时间（小时）
+  cache_expiry_hours: 24
+  # 缓存内容类型
+  cache_content_types:
+    - "generated_articles"
+    - "quiz_questions"
+    - "code_examples"
+    - "user_recommendations"
+
+# 性能配置
+performance:
+  # 并发生成数量
+  max_concurrent_generations: 3
+  # 生成超时时间（秒）
+  generation_timeout_seconds: 120
+  # 批量处理大小
+  batch_size: 10
+  # 内存限制（MB）
+  memory_limit_mb: 1024
+
+# 安全配置
+security:
+  # 内容安全检查
+  content_safety_check: true
+  # 代码安全扫描
+  code_security_scan: true
+  # 用户输入验证
+  input_validation: true
+  # 输出内容过滤
+  output_filtering: true
+
+# 日志配置
+logging:
+  # 日志级别
+  level: "INFO"
+  # 是否记录生成过程
+  log_generation_process: true
+  # 是否记录用户学习行为
+  log_learning_behavior: true
+  # 日志文件路径
+  log_file_path: "logs/coding_tutor_agent.log"
+  # 日志轮转大小（MB）
+  log_rotation_size_mb: 20
+  # 保留日志文件数量
+  log_retention_count: 10
+
+# 数据库配置
+database:
+  # 连接池大小
+  pool_size: 15
+  # 连接超时（秒）
+  connection_timeout: 45
+  # 查询超时（秒）
+  query_timeout: 90
+  # 是否启用事务
+  enable_transactions: true
+
+# 实验性功能
+experimental:
+  # 多模态内容生成
+  multimodal_generation: false
+  # 交互式教学
+  interactive_teaching: false
+  # 游戏化学习
+  gamification: false
+  # 社交学习功能
+  social_learning: false
+
+# 集成配置
+integrations:
+  # 与技术栈总结Agent的集成
+  tech_stack_agent:
+    enabled: true
+    sync_learning_progress: true
+    share_user_preferences: true
+  
+  # 外部API集成
+  external_apis:
+    github:
+      enabled: false
+      api_key: "${GITHUB_API_KEY}"
+    
+    stackoverflow:
+      enabled: false
+      api_key: "${STACKOVERFLOW_API_KEY}"

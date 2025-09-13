@@ -10,7 +10,7 @@ from app.api.v1.endpoints import (
     agents, conversations, knowledge, tools,
     users, coding_sessions, skill_assessments, 
     learning_tasks, technical_debt, mcp, climber_recorder,
-    tech_stack_agent, tech_stack_scheduler
+    tech_stack_agent, tech_stack_scheduler, coding_tutor_agent
 )
 
 api_router = APIRouter()
@@ -40,3 +40,4 @@ api_router.include_router(mcp.router, prefix="/mcp", tags=["mcp"])
 api_router.include_router(climber_recorder.router, prefix="/climber-recorder", tags=["climber-recorder"])
 api_router.include_router(tech_stack_agent.router, prefix="/tech-stack-agent", tags=["tech-stack-agent"])
 api_router.include_router(tech_stack_scheduler.router, prefix="/tech-stack-scheduler", tags=["tech-stack-scheduler"])
+api_router.include_router(coding_tutor_agent.router, prefix="/coding-tutor-agent", tags=["coding-tutor-agent"])
