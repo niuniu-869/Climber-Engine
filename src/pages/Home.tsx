@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, FileText, BookOpen, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import TechnicalDebtBalanceSheet from '../components/TechnicalDebtBalanceSheet';
+import LearningCenter from '../components/LearningCenter';
+import { technicalDebtService } from '../services/technicalDebtService';
+import { learningService } from '../services/learningService';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<string[]>([]);
+  const [dashboardStats, setDashboardStats] = useState({
+    technicalDebts: 0,
+    improvements: 0,
+    teamMembers: 5, // 静态数据
+    codeRecords: 0
+  });
+  const [loading, setLoading] = useState(true);
+  
+  // 模拟用户ID，实际应用中应该从认证系统获取
+  const userId = 1;
 
   const addNotification = (message: string) => {
     setNotifications(prev => [...prev, message]);
@@ -20,7 +34,7 @@ const Home: React.FC = () => {
     }, 500);
   };
 
-  const handleStartLearning = () => {
+  const handleNavigateToLearningCenter = () => {
     addNotification('正在进入学习中心...');
     setTimeout(() => {
       navigate('/learning-center');
@@ -46,6 +60,43 @@ const Home: React.FC = () => {
     setTimeout(() => {
       navigate('/settings');
     }, 500);
+  };
+
+  const handleStartLearning = (content: any) => {
+    if (content) {
+      addNotification(`开始学习: ${content.title}`);
+      // 这里可以导航到具体的学习页面
+    } else {
+      handleNavigateToLearningCenter();
+    }
+  };
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // 并行加载仪表板数据
+      const [debtSummary, userStats] = await Promise.all([
+        technicalDebtService.getUserDebtSummary(userId).catch(() => ({ total_debts: 0, open_debts: 0 })),
+        learningService.getUserLearningStatistics({ user_id: userId }).catch(() => ({ total_attempts: 0 }))
+      ]);
+
+      setDashboardStats({
+        technicalDebts: debtSummary.open_debts || 0,
+        improvements: Math.max(0, (debtSummary.total_debts || 0) - (debtSummary.open_debts || 0)),
+        teamMembers: 5,
+        codeRecords: userStats.total_attempts || 0
+      });
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      addNotification('加载仪表板数据失败');
+    } finally {
+      setLoading(false);
+    }
   };
   return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -78,7 +129,9 @@ const Home: React.FC = () => {
               <BarChart3 className="w-8 h-8 text-blue-600 mr-3" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">技术债务</h3>
-                <p className="text-2xl font-bold text-blue-600">12</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {loading ? '...' : dashboardStats.technicalDebts}
+                </p>
               </div>
             </div>
           </div>
@@ -88,7 +141,9 @@ const Home: React.FC = () => {
               <TrendingUp className="w-8 h-8 text-green-600 mr-3" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">改进建议</h3>
-                <p className="text-2xl font-bold text-green-600">8</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {loading ? '...' : dashboardStats.improvements}
+                </p>
               </div>
             </div>
           </div>
@@ -98,7 +153,7 @@ const Home: React.FC = () => {
               <Users className="w-8 h-8 text-purple-600 mr-3" />
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">团队成员</h3>
-                <p className="text-2xl font-bold text-purple-600">5</p>
+                <p className="text-2xl font-bold text-purple-600">{dashboardStats.teamMembers}</p>
               </div>
             </div>
           </div>
@@ -107,73 +162,28 @@ const Home: React.FC = () => {
             <div className="flex items-center">
               <FileText className="w-8 h-8 text-orange-600 mr-3" />
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">代码记录</h3>
-                <p className="text-2xl font-bold text-orange-600">24</p>
+                <h3 className="text-lg font-semibold text-gray-900">学习记录</h3>
+                <p className="text-2xl font-bold text-orange-600">
+                  {loading ? '...' : dashboardStats.codeRecords}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* 主要功能区域 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="space-y-8 mb-8">
           {/* 技术资产负债表 */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">技术资产负债表</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                <span className="font-medium text-gray-900">高优先级债务</span>
-                <span className="text-red-600 font-bold">3 项</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                <span className="font-medium text-gray-900">中优先级债务</span>
-                <span className="text-yellow-600 font-bold">5 项</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                <span className="font-medium text-gray-900">低优先级债务</span>
-                <span className="text-green-600 font-bold">4 项</span>
-              </div>
-            </div>
-            <button 
-              onClick={handleViewReport}
-              className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              查看详细报告
-            </button>
-          </div>
+          <TechnicalDebtBalanceSheet 
+            userId={userId} 
+            onViewReport={handleViewReport}
+          />
 
-          {/* 学习中心 */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">学习中心</h2>
-            <div className="space-y-4">
-              <div className="flex items-center p-3 bg-blue-50 rounded-lg">
-                <BookOpen className="w-6 h-6 text-blue-600 mr-3" />
-                <div>
-                  <h3 className="font-medium text-gray-900">React 最佳实践</h3>
-                  <p className="text-sm text-gray-600">进度: 60%</p>
-                </div>
-              </div>
-              <div className="flex items-center p-3 bg-green-50 rounded-lg">
-                <BookOpen className="w-6 h-6 text-green-600 mr-3" />
-                <div>
-                  <h3 className="font-medium text-gray-900">代码重构技巧</h3>
-                  <p className="text-sm text-gray-600">进度: 30%</p>
-                </div>
-              </div>
-              <div className="flex items-center p-3 bg-purple-50 rounded-lg">
-                <BookOpen className="w-6 h-6 text-purple-600 mr-3" />
-                <div>
-                  <h3 className="font-medium text-gray-900">性能优化指南</h3>
-                  <p className="text-sm text-gray-600">进度: 80%</p>
-                </div>
-              </div>
-            </div>
-            <button 
-              onClick={handleStartLearning}
-              className="w-full mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              开始学习
-            </button>
-          </div>
+          {/* AI学习中心 */}
+          <LearningCenter 
+            userId={userId} 
+            onStartLearning={handleStartLearning}
+          />
         </div>
 
         {/* 快速操作 */}

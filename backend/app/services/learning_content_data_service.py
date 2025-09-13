@@ -493,7 +493,7 @@ class LearningContentDataService:
         query = self.db.query(QuestionAttempt).filter(
             and_(
                 QuestionAttempt.user_id == user_id,
-                QuestionAttempt.attempt_at >= cutoff_date
+                QuestionAttempt.created_at >= cutoff_date
             )
         )
         
@@ -520,13 +520,13 @@ class LearningContentDataService:
         accuracy_rate = (correct_attempts / total_attempts) * 100 if total_attempts > 0 else 0
         
         # 平均用时
-        total_time = sum(attempt.time_spent_seconds or 0 for attempt in attempts)
+        total_time = sum(attempt.time_spent or 0 for attempt in attempts)
         average_time = total_time / total_attempts if total_attempts > 0 else 0
         
         # 每日活动统计
         daily_activity = {}
         for attempt in attempts:
-            date_key = attempt.attempt_at.date().isoformat()
+            date_key = attempt.created_at.date().isoformat()
             if date_key not in daily_activity:
                 daily_activity[date_key] = {'attempts': 0, 'correct': 0}
             daily_activity[date_key]['attempts'] += 1

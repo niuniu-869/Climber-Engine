@@ -209,6 +209,60 @@ async def get_user_tech_assets(
         )
 
 
+@router.get("/users/{user_id}/net-assets", response_model=List[TechStackAssetResponse])
+async def get_user_tech_net_assets(
+    user_id: int,
+    category: Optional[str] = None,
+    is_active: Optional[bool] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    获取用户的技术净资产（真正掌握的技能）
+    
+    Args:
+        user_id: 用户ID
+        category: 技术分类过滤
+        is_active: 是否活跃过滤
+        db: 数据库会话
+    
+    Returns:
+        技术净资产列表（熟练度较高的技能）
+    """
+    try:
+        data_service = TechStackDataService(db)
+        
+        # 验证用户是否存在
+        user = data_service.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with ID {user_id} not found"
+            )
+        
+        # 获取所有技术栈资产
+        assets = data_service.get_tech_stack_assets(
+            user_id=user_id,
+            category=category,
+            is_active=is_active
+        )
+        
+        # 过滤出真正掌握的技能（熟练度 >= 70%）
+        net_assets = [
+            asset for asset in assets 
+            if asset.proficiency_score >= 70.0
+        ]
+        
+        return [TechStackAssetResponse.from_orm(asset) for asset in net_assets]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get tech net assets: {str(e)}"
+        )
+
+
 @router.get("/users/{user_id}/debts", response_model=List[TechStackDebtResponse])
 async def get_user_tech_debts(
     user_id: int,

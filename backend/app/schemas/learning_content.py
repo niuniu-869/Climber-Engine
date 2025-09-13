@@ -129,7 +129,7 @@ class LearningQuestionCreate(LearningQuestionBase):
     related_article_id: Optional[int] = None
     concepts_tested: Optional[List[str]] = None
     skills_assessed: Optional[List[str]] = None
-    options: Optional[List[Dict[str, str]]] = None
+    options: Optional[Any] = None
     correct_answer: Optional[str] = None
     explanation: Optional[str] = None
     hints: Optional[List[str]] = None
@@ -175,7 +175,7 @@ class LearningQuestionResponse(LearningQuestionBase):
     related_article_id: Optional[int] = None
     concepts_tested: Optional[List[str]] = None
     skills_assessed: Optional[List[str]] = None
-    options: Optional[List[Dict[str, str]]] = None
+    options: Optional[Any] = None
     correct_answer: Optional[str] = None
     explanation: Optional[str] = None
     hints: Optional[List[str]] = None

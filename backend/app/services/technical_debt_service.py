@@ -14,6 +14,7 @@ import re
 from ..models.technical_debt import TechnicalDebt
 from ..models.user import User
 from ..models.coding_session import CodingSession
+from ..models.code_record import CodeRecord
 from ..schemas.technical_debt import TechnicalDebtCreate, TechnicalDebtUpdate
 from ..core.exceptions import TechnicalDebtNotFoundError, InvalidOperationError
 from ..core.logger import get_logger
@@ -415,31 +416,45 @@ class TechnicalDebtService:
         """获取用户技术债务汇总"""
         start_date = datetime.utcnow() - timedelta(days=days)
         
-        # 基础统计
-        total_debts = self.db.query(func.count(TechnicalDebt.id)).filter(
-            TechnicalDebt.user_id == user_id
-        ).scalar()
+        # 基础统计 - 通过CodeRecord和CodingSession关联用户
+        total_debts = self.db.query(func.count(TechnicalDebt.id)).join(
+            CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id
+        ).join(
+            CodingSession, CodeRecord.coding_session_id == CodingSession.id
+        ).filter(
+            CodingSession.user_id == user_id
+        ).scalar() or 0
         
-        open_debts = self.db.query(func.count(TechnicalDebt.id)).filter(
+        open_debts = self.db.query(func.count(TechnicalDebt.id)).join(
+            CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id
+        ).join(
+            CodingSession, CodeRecord.coding_session_id == CodingSession.id
+        ).filter(
             and_(
-                TechnicalDebt.user_id == user_id,
+                CodingSession.user_id == user_id,
                 TechnicalDebt.status == 'open'
             )
-        ).scalar()
+        ).scalar() or 0
         
-        resolved_debts = self.db.query(func.count(TechnicalDebt.id)).filter(
+        resolved_debts = self.db.query(func.count(TechnicalDebt.id)).join(
+            CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id
+        ).join(
+            CodingSession, CodeRecord.coding_session_id == CodingSession.id
+        ).filter(
             and_(
-                TechnicalDebt.user_id == user_id,
+                CodingSession.user_id == user_id,
                 TechnicalDebt.status == 'resolved'
             )
-        ).scalar()
+        ).scalar() or 0
         
         # 严重性分布
         severity_distribution = (self.db.query(
                 TechnicalDebt.severity,
                 func.count(TechnicalDebt.id).label('count')
             )
-            .filter(TechnicalDebt.user_id == user_id)
+            .join(CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id)
+            .join(CodingSession, CodeRecord.coding_session_id == CodingSession.id)
+            .filter(CodingSession.user_id == user_id)
             .group_by(TechnicalDebt.severity)
             .all())
         
@@ -448,22 +463,32 @@ class TechnicalDebtService:
                 TechnicalDebt.debt_type,
                 func.count(TechnicalDebt.id).label('count')
             )
-            .filter(TechnicalDebt.user_id == user_id)
+            .join(CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id)
+            .join(CodingSession, CodeRecord.coding_session_id == CodingSession.id)
+            .filter(CodingSession.user_id == user_id)
             .group_by(TechnicalDebt.debt_type)
             .all())
         
         # 总影响分数
-        total_impact = self.db.query(func.sum(TechnicalDebt.impact_score)).filter(
+        total_impact = self.db.query(func.sum(TechnicalDebt.impact_score)).join(
+            CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id
+        ).join(
+            CodingSession, CodeRecord.coding_session_id == CodingSession.id
+        ).filter(
             and_(
-                TechnicalDebt.user_id == user_id,
+                CodingSession.user_id == user_id,
                 TechnicalDebt.status == 'open'
             )
         ).scalar() or 0
         
         # 估计总工作量
-        total_effort = self.db.query(func.sum(TechnicalDebt.estimated_effort)).filter(
+        total_effort = self.db.query(func.sum(TechnicalDebt.effort_estimate)).join(
+            CodeRecord, TechnicalDebt.code_record_id == CodeRecord.id
+        ).join(
+            CodingSession, CodeRecord.coding_session_id == CodingSession.id
+        ).filter(
             and_(
-                TechnicalDebt.user_id == user_id,
+                CodingSession.user_id == user_id,
                 TechnicalDebt.status == 'open'
             )
         ).scalar() or 0
