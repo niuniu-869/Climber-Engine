@@ -31,9 +31,12 @@ class CodingTutorAgent:
     4. 提供智能学习路径推荐
     """
     
-    def __init__(self, config_path: str = "app/config/coding_tutor_agent_config.yaml"):
+    def __init__(self, 
+                 config_path: str = "app/config/coding_tutor_agent_config.yaml",
+                 knowledge_base_path: str = "app/config/tech_knowledge_base.yaml"):
         """初始化Agent"""
         self.config = self._load_config(config_path)
+        self.knowledge_base_config = self._load_config(knowledge_base_path)
         self.logger = self._setup_logger()
         
         # 内容模板
@@ -109,87 +112,8 @@ class CodingTutorAgent:
         }
     
     def _load_tech_knowledge_base(self) -> Dict[str, Dict[str, Any]]:
-        """加载技术栈知识库"""
-        return {
-            'python': {
-                'topics': {
-                    'beginner': ['变量和数据类型', '控制流', '函数', '列表和字典', '文件操作'],
-                    'intermediate': ['面向对象编程', '异常处理', '模块和包', '装饰器', '生成器'],
-                    'advanced': ['元类', '并发编程', '性能优化', '设计模式', '测试驱动开发'],
-                    'expert': ['CPython内部机制', '扩展开发', '内存管理', '高性能计算', '分布式系统']
-                },
-                'common_patterns': [
-                    '列表推导式', '上下文管理器', '迭代器模式', '单例模式', 'MVC架构'
-                ],
-                'best_practices': [
-                    'PEP 8代码风格', '异常处理', '文档字符串', '单元测试', '代码重构'
-                ]
-            },
-            'javascript': {
-                'topics': {
-                    'beginner': ['变量声明', '数据类型', '函数', '数组和对象', 'DOM操作'],
-                    'intermediate': ['闭包', '原型链', '异步编程', 'ES6+特性', '模块系统'],
-                    'advanced': ['设计模式', '性能优化', '函数式编程', 'TypeScript', '构建工具'],
-                    'expert': ['V8引擎原理', '微前端架构', '性能监控', '安全最佳实践', 'Node.js高级特性']
-                }
-            },
-            'react': {
-                'topics': {
-                    'beginner': ['组件基础', 'JSX语法', 'Props和State', '事件处理', '条件渲染'],
-                    'intermediate': ['Hooks', '状态管理', '路由', '表单处理', '生命周期'],
-                    'advanced': ['性能优化', '自定义Hooks', '上下文API', '错误边界', '代码分割'],
-                    'expert': ['Fiber架构', '服务端渲染', '微前端', '测试策略', '构建优化']
-                }
-            },
-            'java': {
-                'topics': {
-                    'beginner': ['基本语法', '数据类型', '控制结构', '数组', '字符串处理'],
-                    'intermediate': ['面向对象编程', '继承和多态', '接口和抽象类', '异常处理', '集合框架'],
-                    'advanced': ['多线程编程', '网络编程', '数据库连接', '设计模式', 'JVM调优'],
-                    'expert': ['JVM内部机制', '性能调优', '分布式系统', '微服务架构', '企业级开发']
-                }
-            },
-            'django': {
-                'topics': {
-                    'beginner': ['项目结构', '模型定义', '视图函数', '模板系统', 'URL配置'],
-                    'intermediate': ['表单处理', '用户认证', '中间件', '静态文件', '数据库迁移'],
-                    'advanced': ['REST API开发', '缓存策略', '信号系统', '自定义管理命令', '部署配置'],
-                    'expert': ['性能优化', '安全最佳实践', '大规模应用架构', '微服务集成', '高可用部署']
-                }
-            },
-            'postman': {
-                'topics': {
-                    'beginner': ['界面介绍', '发送请求', '查看响应', '保存请求', '创建集合'],
-                    'intermediate': ['环境变量', '测试脚本', '数据驱动测试', '工作流程', '团队协作'],
-                    'advanced': ['自动化测试', 'CI/CD集成', '监控和报告', '模拟服务器', 'API文档生成'],
-                    'expert': ['企业级管理', '高级脚本编写', '性能测试', '安全测试', '大规模API管理']
-                }
-            },
-            'pandas': {
-                'topics': {
-                    'beginner': ['数据结构', '数据读取', '基本操作', '数据选择', '简单统计'],
-                    'intermediate': ['数据清洗', '数据转换', '分组聚合', '数据合并', '时间序列'],
-                    'advanced': ['性能优化', '大数据处理', '自定义函数', '数据可视化', '机器学习集成'],
-                    'expert': ['内存优化', '并行处理', '扩展开发', '企业级数据管道', '实时数据处理']
-                }
-            },
-            'redis': {
-                'topics': {
-                    'beginner': ['基本概念', '数据类型', '基本命令', '连接配置', '简单操作'],
-                    'intermediate': ['持久化机制', '发布订阅', '事务处理', '管道操作', '脚本编程'],
-                    'advanced': ['集群配置', '主从复制', '哨兵模式', '性能调优', '监控管理'],
-                    'expert': ['分布式架构', '高可用设计', '数据分片', '故障恢复', '企业级部署']
-                }
-            },
-            'git': {
-                'topics': {
-                    'beginner': ['版本控制概念', '基本命令', '提交和推送', '分支基础', '克隆仓库'],
-                    'intermediate': ['分支管理', '合并冲突', '标签管理', '远程仓库', '工作流程'],
-                    'advanced': ['高级分支策略', '重写历史', '子模块', '钩子脚本', '大文件管理'],
-                    'expert': ['企业级工作流', '自动化集成', '性能优化', '安全管理', '大型项目管理']
-                }
-            }
-        }
+        """从配置文件加载技术栈知识库"""
+        return self.knowledge_base_config.get('tech_knowledge_base', {})
     
     def is_enabled(self) -> bool:
         """检查Agent是否启用"""

@@ -1,0 +1,588 @@
+# 技术栈知识库配置文件
+# Technology Stack Knowledge Base Configuration
+
+# 技术栈知识库
+tech_knowledge_base:
+  # Python技术栈
+  python:
+    topics:
+      beginner:
+        - "变量和数据类型"
+        - "控制流"
+        - "函数"
+        - "列表和字典"
+        - "文件操作"
+      intermediate:
+        - "面向对象编程"
+        - "异常处理"
+        - "模块和包"
+        - "装饰器"
+        - "生成器"
+      advanced:
+        - "元类"
+        - "并发编程"
+        - "性能优化"
+        - "设计模式"
+        - "测试驱动开发"
+      expert:
+        - "CPython内部机制"
+        - "扩展开发"
+        - "内存管理"
+        - "高性能计算"
+        - "分布式系统"
+    common_patterns:
+      - "列表推导式"
+      - "上下文管理器"
+      - "迭代器模式"
+      - "单例模式"
+      - "MVC架构"
+    best_practices:
+      - "PEP 8代码风格"
+      - "异常处理"
+      - "文档字符串"
+      - "单元测试"
+      - "代码重构"
+
+  # JavaScript技术栈
+  javascript:
+    topics:
+      beginner:
+        - "变量声明"
+        - "数据类型"
+        - "函数"
+        - "数组和对象"
+        - "DOM操作"
+      intermediate:
+        - "闭包"
+        - "原型链"
+        - "异步编程"
+        - "ES6+特性"
+        - "模块系统"
+      advanced:
+        - "设计模式"
+        - "性能优化"
+        - "函数式编程"
+        - "TypeScript"
+        - "构建工具"
+      expert:
+        - "V8引擎原理"
+        - "微前端架构"
+        - "性能监控"
+        - "安全最佳实践"
+        - "Node.js高级特性"
+    common_patterns:
+      - "模块模式"
+      - "观察者模式"
+      - "Promise链"
+      - "函数式编程"
+      - "组件化开发"
+    best_practices:
+      - "ESLint代码规范"
+      - "错误处理"
+      - "性能优化"
+      - "安全编程"
+      - "测试覆盖"
+
+  # React技术栈
+  react:
+    topics:
+      beginner:
+        - "组件基础"
+        - "JSX语法"
+        - "Props和State"
+        - "事件处理"
+        - "条件渲染"
+      intermediate:
+        - "Hooks"
+        - "状态管理"
+        - "路由"
+        - "表单处理"
+        - "生命周期"
+      advanced:
+        - "性能优化"
+        - "自定义Hooks"
+        - "上下文API"
+        - "错误边界"
+        - "代码分割"
+      expert:
+        - "Fiber架构"
+        - "服务端渲染"
+        - "微前端"
+        - "测试策略"
+        - "构建优化"
+    common_patterns:
+      - "高阶组件"
+      - "渲染属性"
+      - "复合组件"
+      - "状态提升"
+      - "受控组件"
+    best_practices:
+      - "组件设计原则"
+      - "状态管理最佳实践"
+      - "性能优化技巧"
+      - "测试策略"
+      - "代码组织"
+
+  # Java技术栈
+  java:
+    topics:
+      beginner:
+        - "基本语法"
+        - "数据类型"
+        - "控制结构"
+        - "数组"
+        - "字符串处理"
+      intermediate:
+        - "面向对象编程"
+        - "继承和多态"
+        - "接口和抽象类"
+        - "异常处理"
+        - "集合框架"
+      advanced:
+        - "多线程编程"
+        - "网络编程"
+        - "数据库连接"
+        - "设计模式"
+        - "JVM调优"
+      expert:
+        - "JVM内部机制"
+        - "性能调优"
+        - "分布式系统"
+        - "微服务架构"
+        - "企业级开发"
+    common_patterns:
+      - "单例模式"
+      - "工厂模式"
+      - "观察者模式"
+      - "策略模式"
+      - "MVC模式"
+    best_practices:
+      - "代码规范"
+      - "异常处理"
+      - "内存管理"
+      - "并发编程"
+      - "测试驱动开发"
+
+  # Django技术栈
+  django:
+    topics:
+      beginner:
+        - "项目结构"
+        - "模型定义"
+        - "视图函数"
+        - "模板系统"
+        - "URL配置"
+      intermediate:
+        - "表单处理"
+        - "用户认证"
+        - "中间件"
+        - "静态文件"
+        - "数据库迁移"
+      advanced:
+        - "REST API开发"
+        - "缓存策略"
+        - "信号系统"
+        - "自定义管理命令"
+        - "部署配置"
+      expert:
+        - "性能优化"
+        - "安全最佳实践"
+        - "大规模应用架构"
+        - "微服务集成"
+        - "高可用部署"
+    common_patterns:
+      - "MVT模式"
+      - "中间件模式"
+      - "信号模式"
+      - "管理器模式"
+      - "序列化模式"
+    best_practices:
+      - "Django最佳实践"
+      - "安全配置"
+      - "性能优化"
+      - "代码组织"
+      - "测试策略"
+
+  # Postman技术栈
+  postman:
+    topics:
+      beginner:
+        - "界面介绍"
+        - "发送请求"
+        - "查看响应"
+        - "保存请求"
+        - "创建集合"
+      intermediate:
+        - "环境变量"
+        - "测试脚本"
+        - "数据驱动测试"
+        - "工作流程"
+        - "团队协作"
+      advanced:
+        - "自动化测试"
+        - "CI/CD集成"
+        - "监控和报告"
+        - "模拟服务器"
+        - "API文档生成"
+      expert:
+        - "企业级管理"
+        - "高级脚本编写"
+        - "性能测试"
+        - "安全测试"
+        - "大规模API管理"
+    common_patterns:
+      - "测试套件组织"
+      - "环境管理"
+      - "数据驱动测试"
+      - "工作流自动化"
+      - "API文档化"
+    best_practices:
+      - "测试组织"
+      - "环境管理"
+      - "脚本编写"
+      - "团队协作"
+      - "文档维护"
+
+  # Pandas技术栈
+  pandas:
+    topics:
+      beginner:
+        - "数据结构"
+        - "数据读取"
+        - "基本操作"
+        - "数据选择"
+        - "简单统计"
+      intermediate:
+        - "数据清洗"
+        - "数据转换"
+        - "分组聚合"
+        - "数据合并"
+        - "时间序列"
+      advanced:
+        - "性能优化"
+        - "大数据处理"
+        - "自定义函数"
+        - "数据可视化"
+        - "机器学习集成"
+      expert:
+        - "内存优化"
+        - "并行处理"
+        - "扩展开发"
+        - "企业级数据管道"
+        - "实时数据处理"
+    common_patterns:
+      - "数据管道"
+      - "ETL模式"
+      - "数据验证"
+      - "批处理"
+      - "流处理"
+    best_practices:
+      - "数据处理最佳实践"
+      - "性能优化"
+      - "内存管理"
+      - "错误处理"
+      - "代码可读性"
+
+  # Redis技术栈
+  redis:
+    topics:
+      beginner:
+        - "基本概念"
+        - "数据类型"
+        - "基本命令"
+        - "连接配置"
+        - "简单操作"
+      intermediate:
+        - "持久化机制"
+        - "发布订阅"
+        - "事务处理"
+        - "管道操作"
+        - "脚本编程"
+      advanced:
+        - "集群配置"
+        - "主从复制"
+        - "哨兵模式"
+        - "性能调优"
+        - "监控管理"
+      expert:
+        - "分布式架构"
+        - "高可用设计"
+        - "数据分片"
+        - "故障恢复"
+        - "企业级部署"
+    common_patterns:
+      - "缓存模式"
+      - "发布订阅模式"
+      - "分布式锁"
+      - "限流模式"
+      - "会话存储"
+    best_practices:
+      - "缓存策略"
+      - "性能优化"
+      - "安全配置"
+      - "监控告警"
+      - "故障处理"
+
+  # Git技术栈
+  git:
+    topics:
+      beginner:
+        - "版本控制概念"
+        - "基本命令"
+        - "提交和推送"
+        - "分支基础"
+        - "克隆仓库"
+      intermediate:
+        - "分支管理"
+        - "合并冲突"
+        - "标签管理"
+        - "远程仓库"
+        - "工作流程"
+      advanced:
+        - "高级分支策略"
+        - "重写历史"
+        - "子模块"
+        - "钩子脚本"
+        - "大文件管理"
+      expert:
+        - "企业级工作流"
+        - "自动化集成"
+        - "性能优化"
+        - "安全管理"
+        - "大型项目管理"
+    common_patterns:
+      - "Git Flow"
+      - "GitHub Flow"
+      - "特性分支"
+      - "发布分支"
+      - "热修复分支"
+    best_practices:
+      - "提交规范"
+      - "分支策略"
+      - "代码审查"
+      - "版本管理"
+      - "团队协作"
+
+# 内容模板配置
+content_templates:
+  # 文章模板
+  article:
+    python:
+      beginner:
+        title: "Python基础：{topic}入门指南"
+        structure:
+          - "概念介绍"
+          - "基本语法"
+          - "代码示例"
+          - "实践练习"
+          - "总结"
+      intermediate:
+        title: "Python进阶：深入理解{topic}"
+        structure:
+          - "核心概念"
+          - "高级特性"
+          - "最佳实践"
+          - "性能优化"
+          - "实际应用"
+      advanced:
+        title: "Python高级：{topic}深度解析"
+        structure:
+          - "原理分析"
+          - "源码解读"
+          - "性能优化"
+          - "实战案例"
+          - "扩展思考"
+      expert:
+        title: "Python专家级：{topic}内部机制"
+        structure:
+          - "底层原理"
+          - "内存模型"
+          - "性能分析"
+          - "优化策略"
+          - "企业实践"
+    
+    javascript:
+      beginner:
+        title: "JavaScript基础：{topic}完全指南"
+        structure:
+          - "基础概念"
+          - "语法详解"
+          - "实例演示"
+          - "常见错误"
+          - "练习题"
+      intermediate:
+        title: "JavaScript进阶：{topic}深入学习"
+        structure:
+          - "核心机制"
+          - "高级用法"
+          - "设计模式"
+          - "性能考虑"
+          - "实际应用"
+
+  # 测验模板
+  quiz:
+    multiple_choice:
+      structure:
+        question: ""
+        options: []
+        correct_answer: 0
+        explanation: ""
+        difficulty: ""
+        tags: []
+        estimated_time_minutes: 2
+    
+    coding_challenge:
+      structure:
+        title: ""
+        description: ""
+        input_format: ""
+        output_format: ""
+        constraints: []
+        examples: []
+        difficulty: ""
+        tags: []
+        estimated_time_minutes: 30
+
+  # 练习模板
+  exercise:
+    coding_exercise:
+      structure:
+        title: ""
+        description: ""
+        requirements: []
+        starter_code: ""
+        test_cases: []
+        hints: []
+        solution: ""
+        difficulty: ""
+        tags: []
+        estimated_time_minutes: 45
+
+# 难度级别配置
+difficulty_levels:
+  beginner:
+    name: "初级"
+    description: "适合编程新手，涵盖基础概念和语法"
+    complexity_score: 1-3
+    prerequisites: []
+  
+  intermediate:
+    name: "中级"
+    description: "适合有一定基础的开发者，涵盖进阶特性"
+    complexity_score: 4-6
+    prerequisites: ["beginner"]
+  
+  advanced:
+    name: "高级"
+    description: "适合经验丰富的开发者，涵盖高级主题"
+    complexity_score: 7-8
+    prerequisites: ["beginner", "intermediate"]
+  
+  expert:
+    name: "专家级"
+    description: "适合技术专家，涵盖内部机制和架构设计"
+    complexity_score: 9-10
+    prerequisites: ["beginner", "intermediate", "advanced"]
+
+# 学习路径配置
+learning_paths:
+  # 前端开发路径
+  frontend_development:
+    name: "前端开发学习路径"
+    description: "从零开始学习前端开发"
+    technologies:
+      - name: "javascript"
+        order: 1
+        required: true
+      - name: "react"
+        order: 2
+        required: true
+      - name: "git"
+        order: 3
+        required: false
+  
+  # 后端开发路径
+  backend_development:
+    name: "后端开发学习路径"
+    description: "Python后端开发完整路径"
+    technologies:
+      - name: "python"
+        order: 1
+        required: true
+      - name: "django"
+        order: 2
+        required: true
+      - name: "redis"
+        order: 3
+        required: false
+      - name: "git"
+        order: 4
+        required: false
+  
+  # 数据分析路径
+  data_analysis:
+    name: "数据分析学习路径"
+    description: "Python数据分析技能培养"
+    technologies:
+      - name: "python"
+        order: 1
+        required: true
+      - name: "pandas"
+        order: 2
+        required: true
+      - name: "git"
+        order: 3
+        required: false
+
+# 内容生成规则
+content_generation_rules:
+  # 文章生成规则
+  article_rules:
+    min_sections: 3
+    max_sections: 8
+    include_code_examples: true
+    include_best_practices: true
+    include_common_mistakes: true
+    target_reading_time_minutes: 10-15
+  
+  # 测验生成规则
+  quiz_rules:
+    questions_per_difficulty:
+      beginner: 3-5
+      intermediate: 4-6
+      advanced: 5-7
+      expert: 6-8
+    include_code_questions: true
+    include_conceptual_questions: true
+    explanation_required: true
+  
+  # 练习生成规则
+  exercise_rules:
+    include_starter_code: true
+    include_test_cases: true
+    include_multiple_solutions: false
+    provide_hints: true
+    difficulty_progression: true
+
+# 评估标准
+assessment_criteria:
+  # 文章质量评估
+  article_quality:
+    clarity: 0.3
+    accuracy: 0.3
+    completeness: 0.2
+    practicality: 0.2
+  
+  # 测验质量评估
+  quiz_quality:
+    question_clarity: 0.25
+    answer_accuracy: 0.25
+    difficulty_appropriateness: 0.25
+    explanation_quality: 0.25
+  
+  # 练习质量评估
+  exercise_quality:
+    problem_clarity: 0.3
+    solution_correctness: 0.3
+    test_coverage: 0.2
+    learning_value: 0.2
