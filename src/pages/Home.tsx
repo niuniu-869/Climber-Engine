@@ -194,6 +194,7 @@ const Home: React.FC = () => {
           <LearningCenter 
             userId={userId} 
             onStartLearning={handleStartLearning}
+            onNotification={addNotification}
           />
         </div>
 

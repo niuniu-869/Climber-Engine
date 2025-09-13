@@ -6,6 +6,7 @@ import { apiService } from '../services/api';
 interface LearningCenterProps {
   userId: number;
   onStartLearning?: (content: any) => void;
+  onNotification?: (message: string) => void;
 }
 
 interface LearningContent {
@@ -21,7 +22,8 @@ interface LearningContent {
 
 const LearningCenter: React.FC<LearningCenterProps> = ({ 
   userId, 
-  onStartLearning 
+  onStartLearning,
+  onNotification 
 }) => {
   const [recommendations, setRecommendations] = useState<LearningRecommendation | null>(null);
   const [recentArticles, setRecentArticles] = useState<LearningArticle[]>([]);
@@ -30,6 +32,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string>('all');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     loadLearningData();
@@ -82,21 +85,43 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
 
   const generateNewContent = async (technology?: string) => {
     try {
-      const requestBody = {
-        user_id: userId,
-        technology: technology || null,
-        content_type: 'mixed',
-        count: 5
-      };
-
-      const result = await apiService.post<any>('/coding-tutor-agent/generate-content', requestBody);
+      setIsGenerating(true);
+      onNotification?.('正在启动自动总结Agent分析...');
       
-      if (result.status === 'success') {
-        // 重新加载数据以显示新生成的内容
-        await loadLearningData();
+      // 调用自动总结Agent进行分析
+      const analysisResult = await apiService.post<any>('/tech-stack-agent/analyze', {
+        user_id: userId,
+        force_run: true
+      });
+      
+      if (analysisResult.status === 'success') {
+        onNotification?.('分析完成，正在生成新的学习内容...');
+        
+        // 分析完成后，生成新的学习内容
+        const requestBody = {
+          user_id: userId,
+          technology: technology || null,
+          content_type: 'mixed',
+          count: 5
+        };
+
+        const result = await apiService.post<any>('/coding-tutor-agent/generate-content', requestBody);
+        
+        if (result.status === 'success') {
+          onNotification?.('内容生成完成，正在刷新页面...');
+          // 重新加载数据以显示新生成的内容
+          await loadLearningData();
+          // 刷新页面以显示最新的技术债务数据
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
       }
     } catch (err) {
       console.error('Failed to generate content:', err);
+      onNotification?.('生成内容失败，请稍后重试');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -167,10 +192,24 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
         </h2>
         <button 
           onClick={() => generateNewContent()}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+          disabled={isGenerating}
+          className={`px-4 py-2 text-white rounded-lg transition-colors flex items-center ${
+            isGenerating 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-purple-600 hover:bg-purple-700'
+          }`}
         >
-          <Lightbulb className="w-4 h-4 mr-2" />
-          生成新内容
+          {isGenerating ? (
+            <>
+              <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              生成中请等待
+            </>
+          ) : (
+            <>
+              <Lightbulb className="w-4 h-4 mr-2" />
+              生成新内容
+            </>
+          )}
         </button>
       </div>
 
