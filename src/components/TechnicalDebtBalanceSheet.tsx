@@ -49,6 +49,17 @@ const TechnicalDebtBalanceSheet: React.FC<TechnicalDebtBalanceSheetProps> = ({
 
   useEffect(() => {
     loadBalanceSheetData();
+    
+    // 监听学习进度更新事件
+    const handleLearningProgressUpdate = () => {
+      loadBalanceSheetData();
+    };
+    
+    window.addEventListener('learningProgressUpdate', handleLearningProgressUpdate);
+    
+    return () => {
+      window.removeEventListener('learningProgressUpdate', handleLearningProgressUpdate);
+    };
   }, [userId]);
 
 

@@ -65,7 +65,18 @@ const Home: React.FC = () => {
   const handleStartLearning = (content: any) => {
     if (content) {
       addNotification(`开始学习: ${content.title}`);
-      // 这里可以导航到具体的学习页面
+      // 根据内容类型导航到相应页面
+      if (content.question_type) {
+        // 这是一个题目
+        setTimeout(() => {
+          navigate(`/question/${content.id}`);
+        }, 500);
+      } else {
+        // 这是一个文章
+        setTimeout(() => {
+          navigate(`/article/${content.id}`);
+        }, 500);
+      }
     } else {
       handleNavigateToLearningCenter();
     }
@@ -86,8 +97,8 @@ const Home: React.FC = () => {
       ]);
 
       setDashboardStats({
-        technicalDebts: debtSummary.open_debts || 0,
-        improvements: Math.max(0, (debtSummary.total_debts || 0) - (debtSummary.open_debts || 0)),
+        technicalDebts: (debtSummary as any).open_debts || (debtSummary as any).summary?.unresolved_debt || 0,
+        improvements: Math.max(0, ((debtSummary as any).total_debts || (debtSummary as any).summary?.total_debt || 0) - ((debtSummary as any).open_debts || (debtSummary as any).summary?.unresolved_debt || 0)),
         teamMembers: 5,
         codeRecords: userStats.total_attempts || 0
       });

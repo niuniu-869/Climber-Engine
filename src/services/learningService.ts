@@ -108,18 +108,33 @@ export interface ContentGenerationResponse {
 }
 
 export interface LearningRecommendation {
-  recommended_technologies: Array<{
+  status: string;
+  recommendations?: Array<{
+    technology?: string;
+    title?: string;
+    reason?: string;
+    description?: string;
+    urgency?: string;
+    importance?: number;
+    recommended_difficulty?: string;
+    difficulty?: string;
+  }>;
+  total_count?: number;
+  generated_at?: string;
+  message?: string;
+  // 保持向后兼容
+  recommended_technologies?: Array<{
     technology: string;
     reason: string;
     urgency?: string;
     importance?: number;
     recommended_difficulty: string;
   }>;
-  suggested_content: {
+  suggested_content?: {
     articles: LearningArticle[];
     questions: LearningQuestion[];
   };
-  learning_path: Array<{
+  learning_path?: Array<{
     step: number;
     technology: string;
     estimated_duration: number;

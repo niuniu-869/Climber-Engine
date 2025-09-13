@@ -710,3 +710,73 @@ async def reload_agent_config():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to reload agent config: {str(e)}"
         )
+
+
+@router.get("/articles/{article_id}", response_model=LearningArticleResponse)
+async def get_article_by_id(
+    article_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取指定文章详情
+    
+    Args:
+        article_id: 文章ID
+        db: 数据库会话
+    
+    Returns:
+        文章详情
+    """
+    try:
+        data_service = LearningContentDataService(db)
+        article = data_service.get_learning_article_by_id(article_id)
+        
+        if not article:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Article not found"
+            )
+        
+        return article
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get article: {str(e)}"
+        )
+
+
+@router.get("/questions/{question_id}", response_model=LearningQuestionResponse)
+async def get_question_by_id(
+    question_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取指定题目详情
+    
+    Args:
+        question_id: 题目ID
+        db: 数据库会话
+    
+    Returns:
+        题目详情
+    """
+    try:
+        data_service = LearningContentDataService(db)
+        question = data_service.get_learning_question_by_id(question_id)
+        
+        if not question:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Question not found"
+            )
+        
+        return question
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get question: {str(e)}"
+        )

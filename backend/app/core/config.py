@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     
     # CORS 配置
-    backend_cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
-    allowed_origins: str = "http://localhost:3000,http://localhost:5173"
+    backend_cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173", "http://localhost:5174"]
+    allowed_origins: str = "http://localhost:3000,http://localhost:5173,http://localhost:5174"
     
     @property
     def allowed_origins_list(self) -> list[str]:

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Brain, Target, TrendingUp, Play, Clock, Star, ChevronRight, Lightbulb, Award } from 'lucide-react';
 import { learningService, LearningRecommendation, LearningArticle, LearningQuestion } from '../services/learningService';
+import { apiService } from '../services/api';
 
 interface LearningCenterProps {
   userId: number;
@@ -39,27 +40,38 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
       setLoading(true);
       setError(null);
 
-      // 并行加载数据
+      // 并行加载数据，使用真实的API端点
       const [recommendationsData, articlesData, questionsData, statsData] = await Promise.all([
-        learningService.getLearningRecommendations(userId, 10),
-        learningService.getUserArticles({ 
-          user_id: userId, 
-          limit: 10 
-        }),
-        learningService.getUserQuestions({ 
-          user_id: userId, 
-          limit: 15 
-        }),
-        learningService.getUserLearningStatistics({ 
-          user_id: userId, 
-          days: 30 
-        })
+        // 调用coding-tutor-agent的推荐API
+        apiService.get<LearningRecommendation>(`/coding-tutor-agent/recommendations?user_id=${userId}&limit=10`)
+          .catch(err => {
+            console.error('获取推荐失败:', err);
+            return { recommendations: [], status: 'error' } as LearningRecommendation;
+          }),
+        // 调用coding-tutor-agent的文章API
+        apiService.get<LearningArticle[]>(`/coding-tutor-agent/users/${userId}/articles?limit=10`)
+          .catch(err => {
+            console.error('获取文章失败:', err);
+            return [] as LearningArticle[];
+          }),
+        // 调用coding-tutor-agent的题目API
+        apiService.get<LearningQuestion[]>(`/coding-tutor-agent/users/${userId}/questions?limit=15`)
+          .catch(err => {
+            console.error('获取题目失败:', err);
+            return [] as LearningQuestion[];
+          }),
+        // 调用coding-tutor-agent的统计API
+        apiService.get<any>(`/coding-tutor-agent/users/${userId}/statistics?days=30`)
+          .catch(err => {
+            console.error('获取统计失败:', err);
+            return { total_attempts: 0, accuracy_rate: 0, total_time: 0 };
+          })
       ]);
 
       setRecommendations(recommendationsData);
-      setRecentArticles(articlesData);
-      setPracticeQuestions(questionsData);
-      setUserStats(statsData);
+      setRecentArticles(articlesData || []);
+      setPracticeQuestions(questionsData || []);
+      setUserStats(statsData || {});
     } catch (err) {
       console.error('Failed to load learning data:', err);
       setError('加载学习数据失败');
@@ -70,14 +82,16 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
 
   const generateNewContent = async (technology?: string) => {
     try {
-      const response = await learningService.generateLearningContent({
+      const requestBody = {
         user_id: userId,
-        technology,
+        technology: technology || null,
         content_type: 'mixed',
         count: 5
-      });
+      };
+
+      const result = await apiService.post<any>('/coding-tutor-agent/generate-content', requestBody);
       
-      if (response.status === 'success') {
+      if (result.status === 'success') {
         // 重新加载数据以显示新生成的内容
         await loadLearningData();
       }
@@ -168,7 +182,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
               <BookOpen className="w-6 h-6 text-blue-600 mr-2" />
               <div>
                 <h3 className="text-sm font-medium text-blue-800">学习文章</h3>
-                <p className="text-xl font-bold text-blue-600">{userStats.articles?.total || 0}</p>
+                <p className="text-xl font-bold text-blue-600">{userStats.articles_count || userStats.articles?.total || recentArticles.length}</p>
               </div>
             </div>
           </div>
@@ -178,7 +192,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
               <Brain className="w-6 h-6 text-green-600 mr-2" />
               <div>
                 <h3 className="text-sm font-medium text-green-800">练习题目</h3>
-                <p className="text-xl font-bold text-green-600">{userStats.questions?.total || 0}</p>
+                <p className="text-xl font-bold text-green-600">{userStats.questions_count || userStats.questions?.total || practiceQuestions.length}</p>
               </div>
             </div>
           </div>
@@ -189,7 +203,8 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
               <div>
                 <h3 className="text-sm font-medium text-purple-800">正确率</h3>
                 <p className="text-xl font-bold text-purple-600">
-                  {userStats.accuracy_rate ? `${userStats.accuracy_rate.toFixed(1)}%` : '0%'}
+                  {userStats.accuracy_rate ? `${(userStats.accuracy_rate * 100).toFixed(1)}%` : 
+                   userStats.correct_rate ? `${userStats.correct_rate.toFixed(1)}%` : '0%'}
                 </p>
               </div>
             </div>
@@ -201,7 +216,8 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
               <div>
                 <h3 className="text-sm font-medium text-orange-800">学习时长</h3>
                 <p className="text-xl font-bold text-orange-600">
-                  {userStats.total_time ? `${Math.round(userStats.total_time / 60)}h` : '0h'}
+                  {userStats.total_time ? `${Math.round(userStats.total_time / 60)}h` : 
+                   userStats.total_learning_time ? `${Math.round(userStats.total_learning_time / 3600)}h` : '0h'}
                 </p>
               </div>
             </div>
@@ -210,24 +226,24 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
       )}
 
       {/* 智能推荐 */}
-      {recommendations && recommendations.recommended_technologies && recommendations.recommended_technologies.length > 0 && (
+      {recommendations && recommendations.recommendations && recommendations.recommendations.length > 0 && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <Star className="w-5 h-5 mr-2 text-yellow-500" />
             AI智能推荐
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recommendations.recommended_technologies.slice(0, 6).map((tech, index) => (
+            {recommendations.recommendations.slice(0, 6).map((tech, index) => (
               <div key={index} className="border border-yellow-200 bg-yellow-50 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-900">{tech.technology}</h4>
+                  <h4 className="font-medium text-gray-900">{tech.technology || tech.title}</h4>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    getDifficultyColor(tech.recommended_difficulty)
+                    getDifficultyColor(tech.recommended_difficulty || tech.difficulty || 'intermediate')
                   }`}>
-                    {tech.recommended_difficulty}
+                    {tech.recommended_difficulty || tech.difficulty || 'intermediate'}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">{tech.reason}</p>
+                <p className="text-sm text-gray-600 mb-3">{tech.reason || tech.description || '推荐学习此技术'}</p>
                 <div className="flex items-center justify-between">
                   {tech.urgency && (
                     <span className={`px-2 py-1 rounded text-xs ${
@@ -239,7 +255,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
                     </span>
                   )}
                   <button 
-                    onClick={() => generateNewContent(tech.technology)}
+                    onClick={() => generateNewContent(tech.technology || tech.title)}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
                   >
                     开始学习 <ChevronRight className="w-4 h-4 ml-1" />
@@ -286,7 +302,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
                       </div>
                     </div>
                     <button 
-                      onClick={() => onStartLearning && onStartLearning(article)}
+                      onClick={() => window.location.href = `/article/${article.id}`}
                       className="ml-4 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 flex items-center"
                     >
                       <Play className="w-3 h-3 mr-1" />
@@ -353,7 +369,7 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
                       </div>
                     </div>
                     <button 
-                      onClick={() => onStartLearning && onStartLearning(question)}
+                      onClick={() => window.location.href = `/question/${question.id}`}
                       className="ml-4 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 flex items-center"
                     >
                       <Play className="w-3 h-3 mr-1" />
@@ -396,13 +412,13 @@ const LearningCenter: React.FC<LearningCenterProps> = ({
             {recommendations.learning_path.slice(0, 5).map((step, index) => (
               <div key={index} className="flex items-center p-3 bg-purple-50 rounded-lg">
                 <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                  {step.step}
+                  {step.step || index + 1}
                 </div>
                 <div className="ml-4 flex-1">
                   <h4 className="font-medium text-gray-900">{step.technology}</h4>
                   <div className="flex items-center text-sm text-gray-600">
                     <Clock className="w-4 h-4 mr-1" />
-                    <span>预计 {step.estimated_duration} 小时</span>
+                    <span>预计 {step.estimated_duration || 10} 小时</span>
                     {step.prerequisites && step.prerequisites.length > 0 && (
                       <span className="ml-4">前置: {step.prerequisites.join(', ')}</span>
                     )}
