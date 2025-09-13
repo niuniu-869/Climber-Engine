@@ -2,6 +2,36 @@
 
 一个基于大模型的智能Agent平台，支持多种AI模型集成和工具调用。
 
+## 🚀 快速启动
+
+### 一键启动 (推荐)
+
+**macOS / Linux:**
+```bash
+./start.sh
+```
+
+**Windows:**
+```cmd
+start.bat
+```
+
+启动脚本会自动：
+- ✅ 检查系统依赖
+- 📦 安装前后端依赖
+- 🗄️ 初始化数据库
+- 🚀 启动前后端服务
+- 🌐 打开启动页面
+
+### 访问地址
+
+- 🎯 **启动页面**: http://localhost:5173 (系统状态监控)
+- 📱 **前端应用**: http://localhost:5173/home
+- 🔧 **后端 API**: http://localhost:8000
+- 📚 **API 文档**: http://localhost:8000/docs
+
+> 💡 详细启动说明请查看 [STARTUP_GUIDE.md](./STARTUP_GUIDE.md)
+
 ## 项目概述
 
 登攀引擎是一个现代化的全栈AI应用平台，旨在为开发者提供强大的Agent构建和管理能力。通过直观的界面和丰富的API，用户可以轻松创建、配置和部署各种类型的AI Agent。
