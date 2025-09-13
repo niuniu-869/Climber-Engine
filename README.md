@@ -1,84 +1,274 @@
 # 登攀引擎 (Climber Engine)
 
-**—— 将每一笔“技术债”，都转化为“技术杠杆”，撬动更大的价值。**
+一个基于大模型的智能Agent平台，支持多种AI模型集成和工具调用。
+
+## 项目概述
+
+登攀引擎是一个现代化的全栈AI应用平台，旨在为开发者提供强大的Agent构建和管理能力。通过直观的界面和丰富的API，用户可以轻松创建、配置和部署各种类型的AI Agent。
+
+### 核心特性
+
+- 🤖 **多模型支持**: 集成OpenAI GPT、Anthropic Claude等主流大模型
+- 🛠️ **工具生态**: 丰富的内置工具和自定义工具支持
+- 💬 **对话管理**: 智能的多轮对话和上下文管理
+- 📚 **知识库**: 向量化知识存储和智能检索
+- 🔌 **MCP协议**: 支持Model Context Protocol标准
+- 🎨 **现代界面**: 基于React和Tailwind CSS的响应式UI
+- 🚀 **高性能**: 异步处理和优化的数据库设计
+
+## 技术架构
+
+### 前端技术栈
+- **框架**: React 18 + TypeScript
+- **构建工具**: Vite
+- **样式**: Tailwind CSS
+- **状态管理**: Zustand
+- **路由**: React Router
+- **图标**: Lucide React
+
+### 后端技术栈
+- **框架**: FastAPI
+- **数据库**: SQLAlchemy + SQLite
+- **AI集成**: OpenAI API, Anthropic API
+- **异步处理**: asyncio + uvicorn
+- **依赖管理**: uv
+
+## 项目结构
+
+```
+Climber Engine/
+├── src/                     # React前端应用
+│   ├── components/          # 可复用组件
+│   ├── pages/              # 页面组件
+│   ├── hooks/              # 自定义Hooks
+│   ├── lib/                # 工具库
+│   └── assets/             # 静态资源
+├── public/                 # 公共资源
+├── backend/                # FastAPI后端服务
+│   ├── app/
+│   │   ├── api/            # API路由
+│   │   ├── core/           # 核心配置
+│   │   ├── models/         # 数据模型
+│   │   ├── schemas/        # Pydantic模式
+│   │   ├── services/       # 业务逻辑
+│   │   └── utils/          # 工具函数
+│   ├── tests/              # 测试文件
+│   └── pyproject.toml      # 后端依赖
+├── package.json            # 前端依赖
+└── README.md              # 项目说明
+```
+
+## 快速开始
+
+### 环境要求
+
+- Node.js 18+
+- Python 3.9+
+- uv (Python包管理器)
+
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/your-org/climber-engine.git
+cd climber-engine
+```
+
+### 2. 后端设置
+
+```bash
+# 进入后端目录
+cd backend
+
+# 安装uv (如果未安装)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 创建虚拟环境并安装依赖
+uv venv
+source .venv/bin/activate  # Linux/macOS
+# 或 .venv\Scripts\activate  # Windows
+
+# 安装依赖
+uv pip install -e .
+
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件，添加你的API密钥
+
+# 初始化数据库
+alembic upgrade head
+
+# 启动后端服务
+uvicorn app.main:app --reload
+```
+
+### 3. 前端设置
+
+```bash
+# 回到项目根目录
+cd ..
+
+# 安装前端依赖
+npm install
+
+# 启动前端开发服务器
+npm run dev
+```
+
+### 4. 访问应用
+
+- 前端应用: http://localhost:5173
+- 后端API: http://localhost:8000
+- API文档: http://localhost:8000/docs
+
+## 开发指南
+
+### 环境配置
+
+在 `backend/.env` 文件中配置必要的环境变量：
+
+```env
+# AI模型API密钥
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+
+# 数据库配置
+DATABASE_URL=sqlite:///./climber_engine.db
+
+# 应用配置
+SECRET_KEY=your_secret_key
+DEBUG=true
+```
+
+### 代码规范
+
+#### 前端
+```bash
+# 代码检查
+npm run lint
+
+# 类型检查
+npm run check
+
+# 构建
+npm run build
+```
+
+#### 后端
+```bash
+# 代码格式化
+black app tests
+isort app tests
+
+# 类型检查
+mypy app
+
+# 测试
+pytest
+```
+
+### 添加新功能
+
+1. **后端API开发**:
+   - 在 `app/models/` 中定义数据模型
+   - 在 `app/schemas/` 中创建Pydantic模式
+   - 在 `app/services/` 中实现业务逻辑
+   - 在 `app/api/v1/endpoints/` 中添加API端点
+
+2. **前端组件开发**:
+   - 在 `src/components/` 中创建可复用组件
+   - 在 `src/pages/` 中添加页面组件
+   - 在 `src/hooks/` 中实现自定义Hooks
+   - 在 `src/lib/` 中添加工具函数
+
+## 部署
+
+### Docker部署
+
+```bash
+# 构建并启动服务
+docker-compose up -d
+```
+
+### 手动部署
+
+#### 后端部署
+```bash
+# 生产环境启动
+gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker
+```
+
+#### 前端部署
+```bash
+# 构建生产版本
+npm run build
+
+# 部署到静态文件服务器
+# 将 dist/ 目录内容部署到你的Web服务器
+```
+
+## API文档
+
+详细的API文档可以通过以下方式访问：
+
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- OpenAPI JSON: http://localhost:8000/openapi.json
+
+### 主要API端点
+
+- `GET /api/v1/agents` - 获取Agent列表
+- `POST /api/v1/agents` - 创建新Agent
+- `GET /api/v1/conversations` - 获取对话列表
+- `POST /api/v1/conversations/{id}/chat` - 发送消息
+- `GET /api/v1/tools` - 获取工具列表
+- `POST /api/v1/knowledge/search` - 搜索知识库
+
+## 贡献指南
+
+我们欢迎社区贡献！请遵循以下步骤：
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 开启 Pull Request
+
+### 提交规范
+
+请使用以下格式提交代码：
+
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+类型包括：
+- `feat`: 新功能
+- `fix`: 修复bug
+- `docs`: 文档更新
+- `style`: 代码格式调整
+- `refactor`: 代码重构
+- `test`: 测试相关
+- `chore`: 构建过程或辅助工具的变动
+
+## 许可证
+
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
+
+## 支持与反馈
+
+- 📧 邮箱: team@climber.ai
+- 🐛 问题反馈: [GitHub Issues](https://github.com/your-org/climber-engine/issues)
+- 💬 讨论: [GitHub Discussions](https://github.com/your-org/climber-engine/discussions)
+- 📖 文档: [项目文档](https://docs.climber.ai)
+
+## 更新日志
+
+查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新详情。
 
 ---
 
-## 1. 核心理念：技术资产负债表 (The Technical Balance Sheet)
-
-在软件工程中，“技术债”通常被视为一个负面概念——为了短期利益而牺牲长期质量，最终需要付出沉重代价。
-
-我们认为，这个概念可以被重新定义，尤其是在 AI 辅助编程（“Vibe Coding”）时代。
-
-**“登攀引擎”** 的核心，是建立一个动态的个人技能学习模型——**技术资产负债表**。
-
-- **技术资产 (Technical Assets)**: 你借助 AI 生成并成功运行的代码、完成的项目、解决的问题。这有可能是形成于你使用自己的能力，也有可能是形成于你调用未来的能力（向未来的自己借债），是你的“资产”。
-- **技术负债 (Technical Liabilities)**: AI 生成的代码中，超出你当前认知边界的部分。你“知其然，而不知其所以然”的代码，就是你的“负债”。
-- **技术净资产 (Technical Net Assets)**: 你真正内化、理解并能独立修改、复现的知识与技能。这是你的核心竞争力，是“资产”减去“负债”的净值。
-
-传统的编程学习，是一个缓慢积累“净资产”的过程，从零开始，你需要学语法、学框架、学库，才能开始进入工程。回报周期长，挫败感强。
-
-而“登攀引擎”所倡导的 **“杠杆式成长” (Leveraged Growth)** 模式，则完全不同：
-
-> 你不再需要等到完全掌握所有知识才开始创造。你可以像一家初创公司一样，通过“加杠杆”（即借入 AI 的能力）来获取“生产设备”（解决真实问题的代码），立即投产，创造价值。
-
-你的学习重心，从“避免犯错”转向了“**管理技术负债**”。
-
-- **复盘代码**，是在阅读“贷款合同”。
-- **理解原理**，是在支付“利息”。
-- **独立重构**，是“还清本金”，将“负债”彻底转化为“净资产”。
-
-**学习的本质，是优化你个人技术资产负债表的过程。**
-
-## 2. “登攀引擎”是什么？
-
-“登攀引擎”是一个 **MCP (Model Context Protocol) 工具服务器**。
-
-它像一个“随身教练”，挂载在你的 AI 编程应用上，默默观察、记录、并为你赋能。
-
-**它的工作流程：**
-
-1. **无感记录 (Passive Recording)**: 当你使用任何 AI 工具进行“Vibe Coding”时，“登攀引擎”会自动记录你所使用的技术栈、生成的代码片段以及背后的关键知识点。
-2. **智能评估 (Intelligent Assessment)**: 它会根据你的历史代码水平和当前互动，精准判断哪些是你的“技术资产”，哪些是你的“技术负债”。
-3. **定制化教学 (Personalized Tutoring)**: 在你完成一次编程任务后，“登攀引擎”会立即生成一份“投后分析报告”。它不会空谈理论，而是会用你刚刚完成的项目作为“活教材”，深入浅出地为你讲解：
-    - 这段代码为什么能 work？
-    - 它背后的核心原理是什么？
-    - 如果脱离 AI，你应该如何思考和实现？
-    - 相关的最佳实践和常见陷阱有哪些？
-4. **量化成长 (Quantified Growth)**: 你的每一次“还债”行为——阅读讲解、提问、重构代码——都会被记录下来，你的“技术净资产”会随之增长。你将能清晰地看到自己的成长轨迹。
-
-## 3. 为谁而设计？自适应的成长路径
-
-“登攀引擎”服务于所有阶段的开发者——从编程小白到资深专家。它能智能适应你的能力水平，提供恰到好处的“脚手架”。
-
-### **对于编程初学者：从 0 到 1 的“破冰船”**
-
-你不再需要花费数月时间学习枯燥的语法。从第一天起，你就可以在“登攀引擎”的辅助下，完成有意义的微项目，并在实践中学习：
-
-- **基础概念具象化**: 通过“获取股票数据”任务，直观理解 `API`、`JSON` 和 `pandas` 如何协同工作。
-- **真实场景驱动**: 在“分析销售数据”的案例中，学习 `SQL` 查询和数据可视化的实际应用。
-- **建立正反馈**: 快速获得“我能行”的成就感，将学习的“推力”变为“拉力”。
-
-*例如，一个会计专业的学生，可以在“登攀引擎”的指导下，用 AI 分析真实的财务报表，验证“本福特定律”，甚至构建一个简单的销售退货预测模型。他获得的不仅是代码，更是数据驱动的思维方式。*
-
-### **对于熟练开发者：跨越技术边界的“传送门”**
-
-当你走出舒适区，探索新的技术领域时，“登攀引擎”会成为你最高效的向导，帮你快速建立认知：
-
-- **快速上手新框架**: 一位前端开发者想学习 `Django`？“登攀引擎”会引导他完成第一个项目的数据库建模、视图函数和模板渲染，并解释 `MTV` 架构的核心思想。
-- **攻克硬核技术**: 一位后端工程师想应用向量数据库？“登攀引擎”会通过一个“智能问答机器人”的案例，带他理解 `Embedding`、向量检索和 `RAG` 的工作原理。
-- **优化工程实践**: 一位资深 Python 开发者希望提升项目性能？“登攀引擎”可以引导他使用 `uv` 替换 `pip`，或用 `FastAPI` 重构旧的 `Flask` 应用，并对比两者在依赖解析和异步处理上的差异。
-
-*“登攀引擎”帮你把“不知道自己不知道”的领域，变成“知道自己不知道”，并快速转化为“知道自己知道”。*
-
-## 4. 为什么是“登攀引擎”？
-
-> 世上无难事，只要肯**登攀**。
-
-我们相信，AI 时代真正的学习者，不是那些试图完全摆脱 AI 的“古法Coding”，也不是那些满足于甩手让AI干所有的“AI Caller”。无论是哪个阶段的开发者，都有自己要学习的内容。
-
-真正的学习者，是**主动的“资本运作高手”**。他们敢于“举债经营”，撬动 AI 的巨大杠杆，实现个人能力的超线性增长；他们也勇于“还债”，通过持续学习和实践，将借来的能力，真正内化为自己的核心竞争力。
-
-“登攀引擎”为你提供的，正是这样一套在 AI 时代进行高效、持续、指数级成长的“资本运作”工具。
-
-**让你，越 Vibe，越强。**
+**登攀引擎** - 让AI Agent开发变得简单而强大 🚀
