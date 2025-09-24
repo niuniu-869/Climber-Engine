@@ -254,3 +254,5 @@ temp/
 # Alembic
 alembic/versions/*.py
 !alembic/versions/__init__.py
+
+pics/
